@@ -1,0 +1,20 @@
+$IN
+a = 1;
+b = 2;
+PRINT a+b;
+$OUT
+3
+$IN
+x = 4 - 3 * 2;
+PRINT x;
+y = 17;
+PRINT y;
+PRINT x+y;
+$OUT
+-2
+17
+15
+$IN
+PRINT --5;
+$OUT
+5
