@@ -216,7 +216,7 @@ public abstract class Instr implements InstrIntf {
 		}
 
 		public void execute(ExecutionEnvIntf env) {
-			int condition = env.popNumber();			
+			int condition = env.popNumber();
 			if (condition != 0) {
 				env.setInstrIter(m_targetTrue.getIterator());
 			} else {

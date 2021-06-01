@@ -1,20 +1,9 @@
 index = 0;
 sum = 0;
-FOR(index = 10; index; index = index - 1;) {
-  sum = sum + index;
+sumOuter = 0;
+FOR(i = 100; i; i = i - 1;) {
+    FOR(j = 9; j; j = j - 1;) {
+        PRINT i + j;
+    }
 }
-PRINT sum;
-
-index = 64;
-sum = 0;
-FOR(index = index * 2; index; index = index / 2;) {
-  sum = sum + index;
-}
-PRINT sum;
-
-index = 10 - 20;
-sum = 0;
-FOR(PRINT index; index; index = index + 2;) {
-  sum = sum + index;
-}
-PRINT sum;
+PRINT 1;
