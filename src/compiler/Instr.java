@@ -2,7 +2,6 @@ package compiler;
 
 import java.io.OutputStreamWriter;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 public abstract class Instr implements InstrIntf {
 
@@ -23,6 +22,20 @@ public abstract class Instr implements InstrIntf {
             os.write("\n");
         }
 
+    }
+    
+    public static class PopNumberInstr implements InstrIntf {
+    	
+    	public PopNumberInstr() {
+    	}
+    	
+    	public void execute(ExecutionEnvIntf env) {
+    		env.popNumber();
+    	}
+    	
+    	public void trace(OutputStreamWriter os) throws Exception {
+    		os.write("POP NUMBER\n");
+    	}
     }
 
     public static class VariableInstr implements InstrIntf {
@@ -232,7 +245,6 @@ public abstract class Instr implements InstrIntf {
     }
 
     public static class ReturnInstr implements InstrIntf {
-        String m_name;
 
         public ReturnInstr() {
         }
@@ -242,10 +254,29 @@ public abstract class Instr implements InstrIntf {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("RETURN: ");
-            os.write(m_name);
-            os.write("\n");
+            os.write("RETURN:\n");
         }
+    }
+    
+    public static class CallInstr implements InstrIntf {
+
+    	FunctionInfo m_function;
+    	
+    	public CallInstr(FunctionInfo functionInfo) {
+    		this.m_function = functionInfo;
+    	}
+    	
+		@Override
+		public void execute(ExecutionEnvIntf env) {
+			env.pushFunction(m_function);
+		}
+
+		@Override
+		public void trace(OutputStreamWriter os) throws Exception {
+			os.write("CALL");
+			os.write("\n");
+		}
+    	
     }
 
     public static class SwitchCaseInstr implements InstrIntf {

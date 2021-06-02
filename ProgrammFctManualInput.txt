@@ -1,0 +1,28 @@
+FUNCTION myFct() {
+  RETURN 1;
+}
+PRINT CALL myFct();
+
+FUNCTION myFct(a, b) {
+  RETURN a + b;
+}
+PRINT CALL myFct(1, 2);
+
+FUNCTION myFctA(c, d) {
+  e = c + 2 * d;
+  RETURN e;
+}
+FUNCTION myFctB(f) {
+  RETURN f + 1;
+}
+g = CALL myFctA(1, 2) + CALL myFctB(3);
+PRINT g;
+
+FUNCTION myFctC(h, i) {
+  RETURN h * i;
+}
+
+FUNCTION myFctD(j) {
+  RETURN CALL myFctC(j, j + 1);
+}
+PRINT CALL myFctD(5);

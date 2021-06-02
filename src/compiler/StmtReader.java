@@ -1,11 +1,11 @@
 package compiler;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
+
 import compiler.for_loop.ForLoopReader;
 import compiler.for_loop.ForLoopReaderIntf;
-
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 
 public class StmtReader implements StmtReaderIntf {
@@ -45,7 +45,7 @@ public class StmtReader implements StmtReaderIntf {
 			getPrint();
 		} else if (token.m_type == Token.Type.FUNCTION){
 			getFunctionDef();
-		}else if (token.m_type == Token.Type.RETURN) {
+		} else if (token.m_type == Token.Type.RETURN) {
 			getReturn();
 		} else if (token.m_type == TokenIntf.Type.FOR) {
 			m_forLoopReader.readForLoop();
@@ -92,10 +92,10 @@ public class StmtReader implements StmtReaderIntf {
 	}
 
 	public void getFunctionDef() throws Exception{
+		List<String> varList = new ArrayList<String>();
 		m_lexer.expect(Token.Type.FUNCTION); // FUNCTION
 		String functionName = m_lexer.lookAheadToken().m_stringValue; // value of IDENT
 		m_lexer.expect(Token.Type.IDENT);
-		m_lexer.advance();
 		m_lexer.expect(Token.Type.LPAREN);
 
 		// GET PARAMS
@@ -103,6 +103,8 @@ public class StmtReader implements StmtReaderIntf {
 			Token token = m_lexer.lookAheadToken();
 			if (token.m_type == Token.Type.IDENT) {
 				m_symbolTable.createSymbol(token.m_stringValue);
+				varList.add(token.m_stringValue);
+				m_lexer.advance();
 			}
 		}
 		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF && m_lexer.lookAheadToken().m_type != Token.Type.RPAREN) {
@@ -110,6 +112,8 @@ public class StmtReader implements StmtReaderIntf {
 			Token token = m_lexer.lookAheadToken();
 			if (token.m_type == Token.Type.IDENT) {
 				m_symbolTable.createSymbol(token.m_stringValue);
+				varList.add(token.m_stringValue);
+				m_lexer.advance();
 			}
 		}
 		m_lexer.expect(Token.Type.RPAREN);
@@ -123,7 +127,7 @@ public class StmtReader implements StmtReaderIntf {
 		//Fill Block with instructions
 		getStmtList();
 		m_lexer.expect(Token.Type.RBRACE);
-		m_functionTable.createFunction(functionName, block); //Save function name and InstructionBlock
+		m_functionTable.createFunction(functionName, block, varList); //Save function name and InstructionBlock
 		//
 
 		m_compileEnv.setCurrentBlock(prevBlock); // Set previous Block as active one

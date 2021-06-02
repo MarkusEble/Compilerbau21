@@ -2,7 +2,6 @@ package compiler;
 
 import java.io.OutputStreamWriter;
 import java.util.Iterator;
-import java.util.function.Function;
 
 public interface ExecutionEnvIntf {
 	/**
@@ -16,11 +15,11 @@ public interface ExecutionEnvIntf {
 	/**
 	 *  push function on execution stack
 	 */
-	//public void pushFunction(FunctionInfo function);
+	public void pushFunction(FunctionInfo function);
 	/**
 	 * pop function from execution stack
 	 */
-	//public void popFunction();
+	public void popFunction();
 	/**
 	 *  get symbol from symbol table
 	 */
@@ -37,15 +36,4 @@ public interface ExecutionEnvIntf {
 	 *  get output stream
 	 */
 	public OutputStreamWriter getOutputStream();
-
-	/**
-	 * pushes function on function stack.
-	 * @param f FunctionInfo
-	 */
-	public void pushFunction(FunctionInfo f);
-	/**
-	 * consumes function from function stack.
-	 * @return FunctionInfo
-	 */
-	public FunctionInfo popFunction();
 }

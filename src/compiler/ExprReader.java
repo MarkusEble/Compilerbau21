@@ -7,7 +7,7 @@ import compiler.logicalexpression.instruction.Not;
 
 public class ExprReader extends ExprReaderIntf {
     private final LogicalExpressionReaderInterface logicalExpressionReader;
-
+    
     public ExprReader(SymbolTable symbolTable, LexerIntf lexer, CompileEnvIntf compileEnv) throws Exception {
         super(symbolTable, lexer, compileEnv);
         logicalExpressionReader = new LogicalExpressionReader(lexer, compileEnv, this);
@@ -41,6 +41,32 @@ public class ExprReader extends ExprReaderIntf {
             //number = var.m_number;
             InstrIntf variableInstr = new Instr.VariableInstr(token.m_stringValue);
             m_compileEnv.addInstr(variableInstr);
+        } else if (token.m_type == Token.Type.CALL) {
+        	m_lexer.expect(Token.Type.CALL); // CALL
+    		String functionName = m_lexer.lookAheadToken().m_stringValue; // value of IDENT
+    		m_lexer.expect(Token.Type.IDENT);
+    		m_lexer.expect(Token.Type.LPAREN);
+
+    		FunctionInfo f_info = m_compileEnv.getFunctionTable().getFunction(functionName);
+
+    		int varCounter = 0;
+
+    		// GET PARAMS
+    		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF
+    				&& m_lexer.lookAheadToken().m_type != Token.Type.RPAREN) {
+    			if (m_lexer.lookAheadToken().m_type == Token.Type.COMMA) {
+    				m_lexer.advance();
+    			} else {	
+    				getExpr();
+    				m_compileEnv.addInstr(new Instr.AssignInstr(f_info.varNames.get(varCounter)));
+    				varCounter++;
+    			}
+    			
+    		}
+    		m_lexer.expect(Token.Type.RPAREN);
+
+    		InstrIntf callInstr = new Instr.CallInstr(f_info);
+    		m_compileEnv.addInstr(callInstr);
         } else {
             throw new ParserException("Unexpected Token: ", token.toString(), m_lexer.getCurrentLocationMsg(), "numerical expression");
         }

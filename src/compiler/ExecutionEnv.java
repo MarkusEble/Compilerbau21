@@ -9,7 +9,6 @@ public class ExecutionEnv implements ExecutionEnvIntf {
     private SymbolTable m_symbolTable;
     private Stack<Integer> m_numberStack;
     private Stack<Iterator<InstrIntf>> m_executionStack;
-    private Stack<FunctionInfo> m_functionStack;
     private Iterator<InstrIntf> m_instrIter;
     private OutputStreamWriter m_outStream;
     private FunctionTable m_functionTable;
@@ -59,14 +58,12 @@ public class ExecutionEnv implements ExecutionEnvIntf {
 
     @Override
     public void pushFunction(FunctionInfo f) {
-        this.m_functionStack.push(f);
-        // TODO save instruction counter
-        // TODO set instruction counter into block
+        this.m_executionStack.push(m_instrIter);
+        setInstrIter(f.m_body.getIterator());
     }
 
     @Override
-    public FunctionInfo popFunction() {
-        return this.m_functionStack.pop();
-        // TODO load instruction counter from previous state
+    public void popFunction() {
+    	setInstrIter(this.m_executionStack.pop());
     }
 }
