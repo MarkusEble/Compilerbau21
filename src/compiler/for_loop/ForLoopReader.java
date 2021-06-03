@@ -31,7 +31,7 @@ public class ForLoopReader implements ForLoopReaderIntf {
         entry.addInstr(new Instr.JumpInstr(forProlog));
         compileEnv.setCurrentBlock(forProlog);
         stmtReader.getStmt();
-        forProlog.addInstr(new Instr.JumpInstr(forConditionCheck));
+        compileEnv.addInstr(new Instr.JumpInstr(forConditionCheck));
 
         // forConditionCheck
         compileEnv.setCurrentBlock(forConditionCheck);
@@ -48,7 +48,7 @@ public class ForLoopReader implements ForLoopReaderIntf {
         // forBody
         compileEnv.setCurrentBlock(forBody);
         stmtReader.getBlockStmt();
-        forBody.addInstr(new Instr.JumpInstr(forIteration));
+        compileEnv.addInstr(new Instr.JumpInstr(forIteration));
 
         compileEnv.setCurrentBlock(forExit);
 
