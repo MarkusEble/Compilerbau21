@@ -49,9 +49,11 @@ public class StmtReader implements StmtReaderIntf {
 			getReturn();
 		} else if (token.m_type == TokenIntf.Type.FOR) {
 			m_forLoopReader.readForLoop();
-    } else if (token.m_type == TokenIntf.Type.SWITCH) {
-      getSwitchCase();
-    }
+		} else if(token.m_type == Token.Type.IF) {
+			getIfStatement();
+		} else if (token.m_type == TokenIntf.Type.SWITCH) {
+           getSwitchCase();
+        }
 	}
 	
 	public void getAssign() throws Exception {
@@ -168,4 +170,51 @@ public class StmtReader implements StmtReaderIntf {
         m_compileEnv.addInstr(switchCaseInstr);
         m_compileEnv.setCurrentBlock(followBlock);
     }
+
+	public void getIfStatement() throws Exception {
+		m_lexer.expect(Token.Type.IF);
+		m_lexer.expect(Token.Type.LPAREN);
+		m_exprReader.getExpr();
+		m_lexer.expect(Token.Type.RPAREN);
+
+		InstrBlock ifBlock = m_compileEnv.createBlock();
+		InstrBlock elseBlock = m_compileEnv.createBlock();
+		InstrBlock endifBlock = m_compileEnv.createBlock();
+
+		InstrIntf jumpCondInstr = new Instr.JumpCondInstr(ifBlock, elseBlock);
+		InstrIntf jumpEndifInstr = new Instr.JumpInstr(endifBlock);
+
+		m_compileEnv.addInstr(jumpCondInstr);
+
+		// If-Block
+		m_compileEnv.setCurrentBlock(ifBlock);
+		getBlockStmt();
+		m_compileEnv.addInstr(jumpEndifInstr);
+		// If-Block ends - Jump to endif
+
+		if(m_lexer.lookAheadToken().m_type == Token.Type.ELSE){
+			// Else-block (Else-block exists)
+			m_compileEnv.setCurrentBlock(elseBlock);
+			m_lexer.expect(Token.Type.ELSE);
+			Token token = m_lexer.lookAheadToken();
+			if(token.m_type == Token.Type.IF){
+				getIfStatement();
+				// Else-Block ends recursively - Jump to endif recursively
+			}else if(token.m_type == Token.Type.LBRACE){
+				getBlockStmt();
+				m_compileEnv.addInstr(jumpEndifInstr);
+				// Else-block ends - Jump to endif
+			}else{
+				throw new ParserException("Unexpected Token: ", token.toString(), m_lexer.getCurrentLocationMsg(), "block or if statement");
+			}
+		}
+
+		// Else block does not exist
+		m_compileEnv.addInstr(jumpEndifInstr);
+		// No instructions executed - Jump to endif
+
+		// Endif block
+		m_compileEnv.setCurrentBlock(endifBlock);
+		// Ends the ifStatement and gets back to original block context
+	}
 }
