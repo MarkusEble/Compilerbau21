@@ -1,6 +1,7 @@
 package compiler;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class FunctionTable implements FunctionTableIntf {
 
@@ -15,8 +16,8 @@ public class FunctionTable implements FunctionTableIntf {
 	 * @param fctName Name of the Function
 	 * @param body Body of the execution
 	 */
-	public void createFunction(String fctName, InstrBlock body) {
-		FunctionInfo fctInfo = new FunctionInfo(fctName, body);
+	public void createFunction(String fctName, InstrBlock body, List<String> varList) {
+		FunctionInfo fctInfo = new FunctionInfo(fctName, body, varList);
 		m_functionMap.put(fctName, fctInfo);
 	}
 

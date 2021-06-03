@@ -40,7 +40,7 @@ public class Lexer implements LexerIntf {
 				m_nextToken.m_type = Token.Type.SWITCH;
 			} else if (ident.equals("CASE")) {
 				m_nextToken.m_type = Token.Type.CASE;
-			}else if (ident.equals("RETURN")) {
+			} else if (ident.equals("RETURN")) {
 				m_nextToken.m_type = Token.Type.RETURN;
 			}
 		} else if (tokenType == Token.Type.INTEGER) {
@@ -149,7 +149,9 @@ public class Lexer implements LexerIntf {
 			return Token.Type.LESS;
 		} else if (firstChar == '>') {
 			return Token.Type.GREATER;
-		} else {
+        } else if (firstChar == ':') {
+            return Token.Type.COLON;
+        } else {
 			throw new ParserException("Unexpected character: ", Character.toString(firstChar), m_reader.getCurrentLocationMsg(), "");
 		}
 	}

@@ -92,6 +92,8 @@ public class Token extends TokenIntf {
 			return "BITNOT";
         } else if (type == Type.BITXOR) {
             return "BITXOR";
+        } else if (type == Type.COLON) {
+            return "COLON";
         } else {
 			return null;
 		}

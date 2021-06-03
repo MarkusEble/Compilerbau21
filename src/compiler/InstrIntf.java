@@ -11,4 +11,5 @@ public interface InstrIntf {
 	 * trace this instruction
 	 */
 	public void trace(OutputStreamWriter os) throws Exception;
+
 }

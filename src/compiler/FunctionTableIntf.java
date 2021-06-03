@@ -1,5 +1,7 @@
 package compiler;
 
+import java.util.List;
+
 public interface FunctionTableIntf {
 
     /*
@@ -10,7 +12,7 @@ public interface FunctionTableIntf {
 	/*
 	 *  creates function with given name and body
 	 */
-	public void createFunction(String fctName, InstrBlock body);
+	public void createFunction(String fctName, InstrBlock body, List<String> varList);
 
 	/*
 	 *  get function for given fctName, returns null if no function with the given name was found

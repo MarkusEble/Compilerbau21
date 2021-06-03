@@ -1,15 +1,17 @@
 package compiler;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+
 import compiler.for_loop.ForLoopReader;
 import compiler.for_loop.ForLoopReaderIntf;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 
 public class StmtReader implements StmtReaderIntf {
-	private SymbolTable m_symbolTable;
-	private FunctionTable m_functionTable;
-	private LexerIntf m_lexer;
+    private SymbolTable m_symbolTable;
+    private FunctionTable m_functionTable;
+    private LexerIntf m_lexer;
     private ExprReader m_exprReader;
     private CompileEnvIntf m_compileEnv;
     private ForLoopReaderIntf m_forLoopReader;
@@ -43,9 +45,13 @@ public class StmtReader implements StmtReaderIntf {
 			getPrint();
 		} else if (token.m_type == Token.Type.FUNCTION){
 			getFunctionDef();
+		} else if (token.m_type == Token.Type.RETURN) {
+			getReturn();
 		} else if (token.m_type == TokenIntf.Type.FOR) {
 			m_forLoopReader.readForLoop();
-		}
+    } else if (token.m_type == TokenIntf.Type.SWITCH) {
+      getSwitchCase();
+    }
 	}
 	
 	public void getAssign() throws Exception {
@@ -86,16 +92,28 @@ public class StmtReader implements StmtReaderIntf {
 	}
 
 	public void getFunctionDef() throws Exception{
-		m_lexer.advance(); // FUNCTION
-		String functionName = m_lexer.lookAheadToken().m_stringValue; // IDENT
-		m_lexer.advance();
+		List<String> varList = new ArrayList<String>();
+		m_lexer.expect(Token.Type.FUNCTION); // FUNCTION
+		String functionName = m_lexer.lookAheadToken().m_stringValue; // value of IDENT
+		m_lexer.expect(Token.Type.IDENT);
 		m_lexer.expect(Token.Type.LPAREN);
 
 		// GET PARAMS
-		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF && m_lexer.lookAheadToken().m_type != Token.Type.RPAREN) {
+		if(m_lexer.lookAheadToken().m_type != Token.Type.EOF && m_lexer.lookAheadToken().m_type != Token.Type.RPAREN){
 			Token token = m_lexer.lookAheadToken();
 			if (token.m_type == Token.Type.IDENT) {
 				m_symbolTable.createSymbol(token.m_stringValue);
+				varList.add(token.m_stringValue);
+				m_lexer.advance();
+			}
+		}
+		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF && m_lexer.lookAheadToken().m_type != Token.Type.RPAREN) {
+			m_lexer.expect(Token.Type.COMMA);
+			Token token = m_lexer.lookAheadToken();
+			if (token.m_type == Token.Type.IDENT) {
+				m_symbolTable.createSymbol(token.m_stringValue);
+				varList.add(token.m_stringValue);
+				m_lexer.advance();
 			}
 		}
 		m_lexer.expect(Token.Type.RPAREN);
@@ -107,21 +125,47 @@ public class StmtReader implements StmtReaderIntf {
 		InstrBlock block = m_compileEnv.createBlock(); // Create new Block
 		m_compileEnv.setCurrentBlock(block); // Set new Block as active one
 		//Fill Block with instructions
-		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF && m_lexer.lookAheadToken().m_type != Token.Type.RBRACE) {
-			Token token = m_lexer.lookAheadToken();
-			if (token.m_type == Token.Type.IDENT) {
-				getAssign();
-			} else if (token.m_type == Token.Type.PRINT) {
-				getPrint();
-			} else if (token.m_type == Token.Type.RETURN) {
-				getReturn();
-			}
-		}
+		getStmtList();
 		m_lexer.expect(Token.Type.RBRACE);
-		m_functionTable.createFunction(functionName, block); //Save function name and InstructionBlock
+		m_functionTable.createFunction(functionName, block, varList); //Save function name and InstructionBlock
 		//
 
 		m_compileEnv.setCurrentBlock(prevBlock); // Set previous Block as active one
 	}
 
+    public void getSwitchCase() throws Exception {
+        m_lexer.advance();
+        m_exprReader.getExpr();
+        m_lexer.expect(TokenIntf.Type.LBRACE);
+
+        Hashtable<Integer, InstrBlock> caseInstrBlocks = new Hashtable<>();
+        int caseValue;
+        InstrBlock blockBeforeSwitch = m_compileEnv.getCurrentBlock();
+        InstrBlock followBlock = m_compileEnv.createBlock();
+
+        while (m_lexer.lookAheadToken().m_type == TokenIntf.Type.CASE) {
+            m_lexer.advance();
+            caseValue = m_lexer.lookAheadToken().m_intValue;
+            m_lexer.advance();
+            m_lexer.expect(TokenIntf.Type.COLON);
+            m_compileEnv.setCurrentBlock(m_compileEnv.createBlock()); // sets current CaseInstrBlock to add stmts to
+            while (m_lexer.lookAheadToken().m_type != TokenIntf.Type.EOF && m_lexer.lookAheadToken().m_type != TokenIntf.Type.CASE && m_lexer.lookAheadToken().m_type != TokenIntf.Type.RBRACE) {
+                getStmt();
+            }
+            m_compileEnv.addInstr(new Instr.JumpInstr(followBlock));
+            caseInstrBlocks.put(caseValue, m_compileEnv.getCurrentBlock());
+        }
+
+        // Add defaultBlock to Hashtable
+        m_compileEnv.setCurrentBlock(m_compileEnv.createBlock());
+        m_compileEnv.addInstr(new Instr.JumpInstr(followBlock));
+        caseInstrBlocks.put(-1, m_compileEnv.getCurrentBlock());
+
+        m_lexer.expect(TokenIntf.Type.RBRACE);
+        m_lexer.expect(TokenIntf.Type.SEMICOL);
+        m_compileEnv.setCurrentBlock(blockBeforeSwitch); // resets the InstrBlock where the SwitchStatement needs to be added
+        InstrIntf switchCaseInstr = new Instr.SwitchCaseInstr(caseInstrBlocks);
+        m_compileEnv.addInstr(switchCaseInstr);
+        m_compileEnv.setCurrentBlock(followBlock);
+    }
 }

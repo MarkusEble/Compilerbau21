@@ -124,11 +124,11 @@ public class LogicalExpressionReader implements LogicalExpressionReaderInterface
      */
     @Override
     public void getBitwiseAnd() throws Exception {
-        expressionReader.getSum();
+        expressionReader.getCompare();
         Token token = lexer.lookAheadToken();
         while (token.m_type == Token.Type.BITAND) {
             lexer.advance();
-            expressionReader.getSum();
+            expressionReader.getCompare();
             InstrIntf andInstruction = new BitAnd();
             // add instruction to code block
             compilerEnv.addInstr(andInstruction);

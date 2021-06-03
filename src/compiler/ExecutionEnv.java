@@ -1,16 +1,15 @@
 package compiler;
 
-import java.util.Iterator;
-import java.util.Stack;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Iterator;
+import java.util.Stack;
 
 public class ExecutionEnv implements ExecutionEnvIntf {
-	private SymbolTable m_symbolTable;
-	private Stack<Integer> m_numberStack;
-	private Stack<Iterator<InstrIntf>> m_executionStack;
-	private Stack<FunctionInfo> m_functionStack;
-	private Iterator<InstrIntf> m_instrIter;
+    private SymbolTable m_symbolTable;
+    private Stack<Integer> m_numberStack;
+    private Stack<Iterator<InstrIntf>> m_executionStack;
+    private Iterator<InstrIntf> m_instrIter;
     private OutputStreamWriter m_outStream;
     private FunctionTable m_functionTable;
     private boolean m_trace;
@@ -57,16 +56,14 @@ public class ExecutionEnv implements ExecutionEnvIntf {
 		return m_outStream;
 	}
 
-	@Override
-	public void pushFunction(FunctionInfo f) {
-		this.m_functionStack.push(f);
-		// TODO save instruction counter
-		// TODO set instruction counter into block
-	}
+    @Override
+    public void pushFunction(FunctionInfo f) {
+        this.m_executionStack.push(m_instrIter);
+        setInstrIter(f.m_body.getIterator());
+    }
 
-	@Override
-	public FunctionInfo popFunction() {
-		return this.m_functionStack.pop();
-		// TODO load instruction counter from previous state
-	}
+    @Override
+    public void popFunction() {
+    	setInstrIter(this.m_executionStack.pop());
+    }
 }

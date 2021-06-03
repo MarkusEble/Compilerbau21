@@ -7,7 +7,7 @@ import compiler.logicalexpression.instruction.Not;
 
 public class ExprReader extends ExprReaderIntf {
     private final LogicalExpressionReaderInterface logicalExpressionReader;
-
+    
     public ExprReader(SymbolTable symbolTable, LexerIntf lexer, CompileEnvIntf compileEnv) throws Exception {
         super(symbolTable, lexer, compileEnv);
         logicalExpressionReader = new LogicalExpressionReader(lexer, compileEnv, this);
@@ -41,6 +41,32 @@ public class ExprReader extends ExprReaderIntf {
             //number = var.m_number;
             InstrIntf variableInstr = new Instr.VariableInstr(token.m_stringValue);
             m_compileEnv.addInstr(variableInstr);
+        } else if (token.m_type == Token.Type.CALL) {
+        	m_lexer.expect(Token.Type.CALL); // CALL
+    		String functionName = m_lexer.lookAheadToken().m_stringValue; // value of IDENT
+    		m_lexer.expect(Token.Type.IDENT);
+    		m_lexer.expect(Token.Type.LPAREN);
+
+    		FunctionInfo f_info = m_compileEnv.getFunctionTable().getFunction(functionName);
+
+    		int varCounter = 0;
+
+    		// GET PARAMS
+    		while (m_lexer.lookAheadToken().m_type != Token.Type.EOF
+    				&& m_lexer.lookAheadToken().m_type != Token.Type.RPAREN) {
+    			if (m_lexer.lookAheadToken().m_type == Token.Type.COMMA) {
+    				m_lexer.advance();
+    			} else {	
+    				getExpr();
+    				m_compileEnv.addInstr(new Instr.AssignInstr(f_info.varNames.get(varCounter)));
+    				varCounter++;
+    			}
+    			
+    		}
+    		m_lexer.expect(Token.Type.RPAREN);
+
+    		InstrIntf callInstr = new Instr.CallInstr(f_info);
+    		m_compileEnv.addInstr(callInstr);
         } else {
             throw new ParserException("Unexpected Token: ", token.toString(), m_lexer.getCurrentLocationMsg(), "numerical expression");
         }
@@ -121,4 +147,40 @@ public class ExprReader extends ExprReaderIntf {
             token = m_lexer.lookAheadToken();
         }
     }
+
+	public void getCompare() throws Exception {
+		getSum();
+		Token token = m_lexer.lookAheadToken(); 
+		while (token.m_type == Token.Type.LESS || token.m_type == Token.Type.LESSEQ || token.m_type == Token.Type.GREATER || token.m_type == Token.Type.GREATEREQ || token.m_type == Token.Type.EQ || token.m_type == Token.Type.NOTEQ) {
+			m_lexer.advance();
+			if(token.m_type == Token.Type.LESS) {
+				getSum();
+				InstrIntf lessInstr = new Instr.LessInstr();
+				m_compileEnv.addInstr(lessInstr);
+			} else if(token.m_type == Token.Type.LESSEQ) {
+				getSum();
+				InstrIntf lessEqualInstr = new Instr.LessEqualInstr();
+				m_compileEnv.addInstr(lessEqualInstr);
+			} else if(token.m_type == Token.Type.GREATER) {
+				getSum();
+				InstrIntf greaterInstr = new Instr.GreaterInstr();
+				m_compileEnv.addInstr(greaterInstr);
+			} else if(token.m_type == Token.Type.GREATEREQ) {
+				getSum();
+				InstrIntf greaterEqualInstr = new Instr.GreaterEqualInstr();
+				m_compileEnv.addInstr(greaterEqualInstr);
+			} else if(token.m_type == Token.Type.EQ) {
+				getSum();
+				InstrIntf equalInstr = new Instr.EqualInstr();
+				m_compileEnv.addInstr(equalInstr);
+			} else if(token.m_type == Token.Type.NOTEQ) {
+				getSum();
+				InstrIntf notEqualInstr = new Instr.NotEqualInstr();
+				m_compileEnv.addInstr(notEqualInstr);
+			}
+			token = m_lexer.lookAheadToken(); 
+		}
+		//return number;
+	}
+
 }

@@ -40,6 +40,7 @@ abstract class TokenIntf {
 		BITOR,
 		BITNOT,
         BITXOR,		
+        COLON,
 	}
 
 	public Type m_type;

@@ -29,6 +29,6 @@ public class BitXor implements InstrIntf {
      */
     @Override
     public void trace(OutputStreamWriter os) throws Exception {
-        os.write("OR\n");
+        os.write("XOR\n");
     }
 }

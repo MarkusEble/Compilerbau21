@@ -1,0 +1,36 @@
+$IN
+FUNCTION myFct() {
+  RETURN 1;
+}
+PRINT CALL myFct();
+$OUT
+1
+$IN
+FUNCTION myFct(a, b) {
+  RETURN a + b;
+}
+PRINT CALL myFct(1, 2);
+$OUT
+3
+$IN
+FUNCTION myFctA(c, d) {
+  e = c + 2 * d;
+  RETURN e;
+}
+FUNCTION myFctB(f) {
+  RETURN f + 1;
+}
+g = CALL myFctA(1, 2) + CALL myFctB(3);
+PRINT g;
+$OUT
+9
+$IN
+FUNCTION myFctC(h, i) {
+  RETURN h * i;
+}
+FUNCTION myFctD(j) {
+  RETURN myFctC(j, j + 1);
+}
+PRINT myFctD(5);
+$OUT
+30
