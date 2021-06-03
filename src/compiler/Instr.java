@@ -217,7 +217,9 @@ public abstract class Instr implements InstrIntf {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("JUMP\n");
+            os.write("JUMP ");
+            os.write(m_target.getName());
+            os.write("\n");
         }
     }
 
@@ -240,7 +242,11 @@ public abstract class Instr implements InstrIntf {
         }
 
         public void trace(OutputStreamWriter os) throws Exception {
-            os.write("JUMP COND\n");
+            os.write("JUMP COND ");
+            os.write(m_targetTrue.getName());
+            os.write(", ");
+            os.write(m_targetFalse.getName());
+            os.write("\n");
         }
     }
 
