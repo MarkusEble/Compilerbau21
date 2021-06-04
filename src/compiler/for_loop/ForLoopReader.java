@@ -17,29 +17,41 @@ public class ForLoopReader implements ForLoopReaderIntf {
     }
 
     public void readForLoop() throws Exception {
-        final InstrBlock prevBlock = compileEnv.getCurrentBlock();
-        final InstrBlock postIterationBlock = compileEnv.createBlock();
+        final InstrBlock entry = compileEnv.getCurrentBlock();
+        final InstrBlock forProlog = compileEnv.createBlock();
+        final InstrBlock forConditionCheck = compileEnv.createBlock();
+        final InstrBlock forBody = compileEnv.createBlock();
+        final InstrBlock forIteration = compileEnv.createBlock();
+        final InstrBlock forExit = compileEnv.createBlock();
+
         lexer.advance();
         lexer.expect(Token.Type.LPAREN);
+
+        // forProlog
+        entry.addInstr(new Instr.JumpInstr(forProlog));
+        compileEnv.setCurrentBlock(forProlog);
         stmtReader.getStmt();
-        final InstrBlock forLoopBlock = compileEnv.createBlock();
-        prevBlock.addInstr(new Instr.JumpInstr(forLoopBlock));
-        compileEnv.setCurrentBlock(postIterationBlock);
+        compileEnv.addInstr(new Instr.JumpInstr(forConditionCheck));
+
+        // forConditionCheck
+        compileEnv.setCurrentBlock(forConditionCheck);
         exprReader.getExpr();
         lexer.expect(Token.Type.SEMICOL);
+        forConditionCheck.addInstr(new Instr.JumpCondInstr(forBody, forExit));
+
+        // forIteration
+        compileEnv.setCurrentBlock(forIteration);
         stmtReader.getStmt();
+        forIteration.addInstr(new Instr.JumpInstr(forConditionCheck));
         lexer.expect(Token.Type.RPAREN);
-        compileEnv.setCurrentBlock(forLoopBlock);
+
+        // forBody
+        compileEnv.setCurrentBlock(forBody);
         stmtReader.getBlockStmt();
-        final InstrBlock postBlock = compileEnv.createBlock();
-        compileEnv.setCurrentBlock(postBlock);
-        stmtReader.getStmtList();
-        compileEnv.setCurrentBlock(forLoopBlock);
-        final Instr.JumpInstr jump = new Instr.JumpInstr(postIterationBlock);
-        final Instr.JumpCondInstr condInstr = new Instr.JumpCondInstr(forLoopBlock, postBlock);
-        forLoopBlock.addInstr(jump);
-        postIterationBlock.addInstr(condInstr);
-        compileEnv.setCurrentBlock(prevBlock);
+        compileEnv.addInstr(new Instr.JumpInstr(forIteration));
+
+        compileEnv.setCurrentBlock(forExit);
+
     }
 
 }

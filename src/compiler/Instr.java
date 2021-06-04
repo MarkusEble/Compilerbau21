@@ -23,19 +23,19 @@ public abstract class Instr implements InstrIntf {
         }
 
     }
-    
+
     public static class PopNumberInstr implements InstrIntf {
-    	
-    	public PopNumberInstr() {
-    	}
-    	
-    	public void execute(ExecutionEnvIntf env) {
-    		env.popNumber();
-    	}
-    	
-    	public void trace(OutputStreamWriter os) throws Exception {
-    		os.write("POP NUMBER\n");
-    	}
+
+        public PopNumberInstr() {
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            env.popNumber();
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("POP NUMBER\n");
+        }
     }
 
     public static class VariableInstr implements InstrIntf {
@@ -263,26 +263,26 @@ public abstract class Instr implements InstrIntf {
             os.write("RETURN:\n");
         }
     }
-    
+
     public static class CallInstr implements InstrIntf {
 
-    	FunctionInfo m_function;
-    	
-    	public CallInstr(FunctionInfo functionInfo) {
-    		this.m_function = functionInfo;
-    	}
-    	
-		@Override
-		public void execute(ExecutionEnvIntf env) {
-			env.pushFunction(m_function);
-		}
+        FunctionInfo m_function;
 
-		@Override
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("CALL");
-			os.write("\n");
-		}
-    	
+        public CallInstr(FunctionInfo functionInfo) {
+            this.m_function = functionInfo;
+        }
+
+        @Override
+        public void execute(ExecutionEnvIntf env) {
+            env.pushFunction(m_function);
+        }
+
+        @Override
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("CALL");
+            os.write("\n");
+        }
+
     }
 
     public static class SwitchCaseInstr implements InstrIntf {
@@ -309,130 +309,130 @@ public abstract class Instr implements InstrIntf {
         }
     }
 
-	public static class LessInstr implements InstrIntf {
+    public static class LessInstr implements InstrIntf {
 
-		public LessInstr() {
-		}
+        public LessInstr() {
+        }
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 < op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("LESS\n");
-		}
-	}
-	
-	public static class LessEqualInstr implements InstrIntf {
+            if(op1 < op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
 
-		public LessEqualInstr() {
-		}
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("LESS\n");
+        }
+    }
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 <= op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+    public static class LessEqualInstr implements InstrIntf {
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("LESSEQUAL\n");
-		}
-	}
-	
-	public static class GreaterInstr implements InstrIntf {
+        public LessEqualInstr() {
+        }
 
-		public GreaterInstr() {
-		}
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 > op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+            if(op1 <= op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("GREATER\n");
-		}
-	}
-	
-	public static class GreaterEqualInstr implements InstrIntf {
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("LESSEQUAL\n");
+        }
+    }
 
-		public GreaterEqualInstr() {
-		}
+    public static class GreaterInstr implements InstrIntf {
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 >= op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+        public GreaterInstr() {
+        }
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("GREATEREQUAL\n");
-		}
-	}
-	
-	public static class EqualInstr implements InstrIntf {
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
 
-		public EqualInstr() {
-		}
+            if(op1 > op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 == op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("GREATER\n");
+        }
+    }
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("EQUAL\n");
-		}
-	}
-	
-	public static class NotEqualInstr implements InstrIntf {
+    public static class GreaterEqualInstr implements InstrIntf {
 
-		public NotEqualInstr() {
-		}
+        public GreaterEqualInstr() {
+        }
 
-		public void execute(ExecutionEnvIntf env) {
-			int op2 = env.popNumber();
-			int op1 = env.popNumber();
-			
-			if(op1 != op2) {
-				env.pushNumber(1);
-			} else {
-				env.pushNumber(0);
-			}
-		}
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
 
-		public void trace(OutputStreamWriter os) throws Exception {
-			os.write("NOTEQUAL\n");
-		}
-	}
+            if(op1 >= op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("GREATEREQUAL\n");
+        }
+    }
+
+    public static class EqualInstr implements InstrIntf {
+
+        public EqualInstr() {
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
+
+            if(op1 == op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("EQUAL\n");
+        }
+    }
+
+    public static class NotEqualInstr implements InstrIntf {
+
+        public NotEqualInstr() {
+        }
+
+        public void execute(ExecutionEnvIntf env) {
+            int op2 = env.popNumber();
+            int op1 = env.popNumber();
+
+            if(op1 != op2) {
+                env.pushNumber(1);
+            } else {
+                env.pushNumber(0);
+            }
+        }
+
+        public void trace(OutputStreamWriter os) throws Exception {
+            os.write("NOTEQUAL\n");
+        }
+    }
 
 }
