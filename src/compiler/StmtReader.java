@@ -6,6 +6,8 @@ import java.util.List;
 
 import compiler.for_loop.ForLoopReader;
 import compiler.for_loop.ForLoopReaderIntf;
+import compiler.while_loop.WhileLoopReader;
+import compiler.while_loop.WhileLoopReaderIntf;
 
 
 public class StmtReader implements StmtReaderIntf {
@@ -15,6 +17,7 @@ public class StmtReader implements StmtReaderIntf {
     private ExprReader m_exprReader;
     private CompileEnvIntf m_compileEnv;
     private ForLoopReaderIntf m_forLoopReader;
+    private WhileLoopReaderIntf m_whileLoopReader;
 
 	public StmtReader(LexerIntf lexer, CompileEnvIntf compileEnv) throws Exception {
 		m_symbolTable = compileEnv.getSymbolTable();
@@ -23,6 +26,7 @@ public class StmtReader implements StmtReaderIntf {
 		m_compileEnv = compileEnv;
 		m_exprReader = new ExprReader(m_symbolTable, m_lexer, compileEnv);
 		m_forLoopReader = new ForLoopReader(m_compileEnv, this, m_exprReader, m_lexer);
+		m_whileLoopReader = new WhileLoopReader(m_compileEnv, this, m_exprReader, m_lexer);
 	}
 	
 	public void getStmtList() throws Exception {
@@ -53,6 +57,14 @@ public class StmtReader implements StmtReaderIntf {
 			getIfStatement();
 		} else if (token.m_type == TokenIntf.Type.SWITCH) {
            getSwitchCase();
+        } else if (token.m_type == TokenIntf.Type.WHILE) {
+            m_whileLoopReader.readWhileLoop();
+        } else if (token.m_type == TokenIntf.Type.DO) {
+            m_whileLoopReader.readDoWhileLoop();
+        } else if (token.m_type == TokenIntf.Type.BREAK) {
+            m_whileLoopReader.breakWhileLoop();
+        } else {
+        	throw new ParserException("Unexpected Token: ",token.toString(), m_lexer.getCurrentLocationMsg(), Token.type2String(token.m_type));
         }
 	}
 	

@@ -1,0 +1,40 @@
+index = 10;
+sum = 0;
+WHILE(index) {
+sum = sum + index;
+index = index - 1;
+}
+PRINT sum;
+
+index = 10;
+sum = 0;
+WHILE(index) {
+  ndx = 5;
+  index = index - 1;
+  WHILE(ndx) {
+    sum = sum + ndx;
+	ndx = ndx - 1;
+  }
+}
+PRINT sum;
+
+index = 10;
+sum = 0;
+DO {
+  sum = sum + index;
+  index = index - 1;
+} WHILE(index);
+PRINT sum;
+
+index = 10;
+sum = 0;
+WHILE(index) {
+  ndx = 5;
+  index = index -1;
+  WHILE(ndx) {
+    sum = sum + ndx;
+	BREAK;
+	ndx = ndx - 1;
+  }
+}
+PRINT sum;

@@ -1,0 +1,54 @@
+$IN
+PRINT 0 && 1;
+$OUT
+0
+$IN
+PRINT 0 || 1;
+$OUT
+1
+$IN
+PRINT !0;
+$OUT
+1
+$IN
+PRINT 1 & 3;
+$OUT
+1
+$IN
+PRINT 1 | 3;
+$OUT
+3
+$IN
+PRINT ~1;
+$OUT
+-2
+$IN
+i = 2;
+PRINT i && 1;
+PRINT i || 1;
+PRINT !i;
+PRINT i & 3;
+PRINT i | 3;
+PRINT ~i;
+$OUT
+1
+1
+0
+2
+3
+-3
+$IN
+i = 3;
+PRINT i - 3 && 1;
+PRINT i - 3 || i - 3;
+PRINT !i - 3;
+PRINT i & 3 * 2;
+PRINT (i | 3) * 2;
+PRINT ~(i + 2);
+$OUT
+0
+0
+-3
+2
+6
+-6

@@ -94,6 +94,8 @@ public class Token extends TokenIntf {
             return "BITXOR";
         } else if (type == Type.COLON) {
             return "COLON";
+        } else if (type == Type.BREAK) {
+            return "BREAK";
         } else {
 			return null;
 		}

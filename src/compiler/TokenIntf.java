@@ -1,6 +1,6 @@
 package compiler;
 
-abstract class TokenIntf {
+public abstract class TokenIntf {
 	public enum Type {
 		EOF,
 		IDENT,
@@ -41,7 +41,8 @@ abstract class TokenIntf {
 		BITNOT,
         BITXOR,		
         COLON,
-	}
+        BREAK,
+ }
 
 	public Type m_type;
 	public int m_intValue; 

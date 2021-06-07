@@ -34,6 +34,8 @@ public class Lexer implements LexerIntf {
 				m_nextToken.m_type = Token.Type.WHILE;
 			} else if (ident.equals("DO")) {
 				m_nextToken.m_type = Token.Type.DO;
+			} else if(ident.equals("BREAK")) {
+				m_nextToken.m_type = Token.Type.BREAK;
 			} else if (ident.equals("FOR")) {
 				m_nextToken.m_type = Token.Type.FOR;
 			} else if (ident.equals("SWITCH")) {
